@@ -34,6 +34,31 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.blue,
+        actions: [
+          // Show sync indicator when data is from cache
+          BlocBuilder<AirportCubit, AirportState>(
+            builder: (context, state) {
+              if (state is AirportLoaded && state.isFromCache) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Center(
+                    child: SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -66,6 +91,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 fillColor: Colors.white,
               ),
             ),
+          ),
+          // Cached data indicator (subtle)
+          BlocBuilder<AirportCubit, AirportState>(
+            builder: (context, state) {
+              if (state is AirportLoaded && state.isFromCache) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  color: Colors.amber.withValues(alpha: 0.08),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.cached,
+                        size: 14,
+                        color: Colors.amber.shade600,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Cached • Updating',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.amber.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
           ),
           // Airport List
           Expanded(
